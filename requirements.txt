@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+aiosqlite==0.17.0
+install sqlalchemy==1.4.36 
+alembic==1.7.7
