@@ -13,7 +13,6 @@ from app.crud.meeting_room import (
     get_meeting_room_by_id, get_room_id_by_name, 
     read_all_rooms_from_db, update_meeting_room
 )
-)
 
 # Импортируем модель, чтобы указать её в аннотации.
 from app.models.meeting_room import MeetingRoom
@@ -127,3 +126,4 @@ async def check_meeting_room_exists(
             detail='Переговорка не найдена!'
         )
     return meeting_room
+
