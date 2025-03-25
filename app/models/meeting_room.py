@@ -1,5 +1,7 @@
 # Импортируем из Алхимии нужные классы.
 from sqlalchemy import Column, String, Text
+# Импортируйте новую функцию.
+from sqlalchemy.orm import relationship
 
 # Импортируем базовый класс для моделей.
 from app.core.db import Base
@@ -12,3 +14,5 @@ class MeetingRoom(Base):
     # Новый атрибут модели. Значение nullable по умолчанию равно True, 
     # поэтому его можно не указывать.
     description = Column(Text)
+    # Установите связь между моделями через функцию relationship.
+    reservations = relationship('Reservation', cascade='delete')
