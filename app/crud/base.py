@@ -10,7 +10,7 @@ class CRUDBase:
         self.model = model
 
     async def get(
-            self, 
+            self,
             obj_id: int,
             session: AsyncSession,
     ):
@@ -20,17 +20,17 @@ class CRUDBase:
             )
         )
         return db_obj.scalars().first()
-    
+
     # получить все объекты заданного класса;
     async def get_multi(
-            self, 
+            self,
             session: AsyncSession
     ):
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
     async def create(
-            self, 
+            self,
             obj_in,
             session: AsyncSession,
     ):
@@ -69,8 +69,8 @@ class CRUDBase:
 
     # по произвольному атрибуту (в том числе и по id) сможет получить объект из базы
     async def get_by_attribute(
-            self, 
-            attr_name: str, 
+            self,
+            attr_name: str,
             attr_value: str,
             session: AsyncSession,
     ):
