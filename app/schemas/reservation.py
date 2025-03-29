@@ -1,4 +1,5 @@
 # app/schemas/reservation.py
+from typing import Optional
 from datetime import datetime, timedelta
 from pydantic import Field
 from pydantic import BaseModel, Extra, root_validator, validator
@@ -61,6 +62,7 @@ class ReservationDB(ReservationBase):
     meetingroom_id: int
     # запретить пользователю передавать параметры, не описанные в схеме,
     # в подклассе Config устанавливается значение
+    user_id: Optional[int]
 
     class Config:
         orm_mode = True
