@@ -78,8 +78,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         print(f'Пользователь {user.email} зарегистрирован.')
 
 
-# Корутина, возвращающая объект класса UserManager.
+
 async def get_user_manager(user_db=Depends(get_user_db)):
+    """Корутина, возвращающая объект класса UserManager"""
     yield UserManager(user_db)
 
 # Центральный объект библиотеки, связывающий объект класса UserManager
