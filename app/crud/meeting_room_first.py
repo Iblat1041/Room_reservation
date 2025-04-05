@@ -11,7 +11,7 @@ from app.models.meeting_room import MeetingRoom
 from app.schemas.meeting_room import MeetingRoomCreate, MeetingRoomUpdate
 
 
-# Функция работает с асинхронной сессией,
+# Функция работает с асинхронной сессией AsyncSession,
 # поэтому ставим ключевое слово async.
 # В функцию передаём схему MeetingRoomCreate.
 async def create_meeting_room(
@@ -63,6 +63,7 @@ async def get_meeting_room_by_id(
         room_id: int,
         session: AsyncSession,
 ) -> Optional[MeetingRoom]:
+    """Функция для получения объекта по его ID """
     db_room = await session.execute(
         select(MeetingRoom).where(
             MeetingRoom.id == room_id
@@ -79,7 +80,8 @@ async def update_meeting_room(
         room_in: MeetingRoomUpdate,
         session: AsyncSession,
 ) -> MeetingRoom:
-    # Представляем объект из БД в виде словаря.
+    """Функция для обновления объекта."""
+    # Получаем из БД объект с помощью jsonable_encoder()
     obj_data = jsonable_encoder(db_room)
     # Конвертируем объект с данными из запроса в словарь, 
     # исключаем неустановленные пользователем поля.

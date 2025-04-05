@@ -20,6 +20,7 @@ class CRUDMeetingRoom(CRUDBase):
             room_name: str,
             session: AsyncSession,
     ) -> Optional[int]:
+        """Проверяем уникальность имени переговорки"""
         db_room_id = await session.execute(
             select(MeetingRoom.id).where(
                 MeetingRoom.name == room_name

@@ -113,6 +113,7 @@ async def check_name_duplicate(
         room_name: str,
         session: AsyncSession,
 ) -> None:
+    """Проверка дубликата имени"""
     # Замените вызов функции на вызов метода.
     room_id = await meeting_room_crud.get_room_id_by_name(room_name, session)
     if room_id is not None:

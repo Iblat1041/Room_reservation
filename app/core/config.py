@@ -4,6 +4,9 @@ from pydantic import BaseSettings, EmailStr
 
 
 class Settings(BaseSettings):
+    """Для работы с переменными окружениями в FastAPI , 
+    унаследованный от класса BaseSettings 
+    """
     app_title: str = 'Бронирование переговорок'
     database_url: str
     secret: str = 'secret'

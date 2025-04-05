@@ -17,9 +17,13 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 
 # SQLAlchemyUserDatabase — это функция, которая используется в пакете FastAPI Users для работы с базами данных SQL.  12
-# Она позволяет создавать адаптер для взаимодействия с базой данных, передавая в качестве параметров экземпляр сессии и класс модели пользователя
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    """Aсинхронный генератор, обеспечивает доступ к БД через SQLAlchemy"""
+async def get_user_db(
+        session: AsyncSession = Depends(get_async_session)
+        ):
+    """
+     Aсинхронный генератор, позволяет создавать адаптер для взаимодействия с базой данных, 
+     передавая в качестве параметров экземпляр сессии и класс модели пользователя
+    """
     yield SQLAlchemyUserDatabase(session, User)
 
 # Определяем транспорт: передавать токен будем
@@ -70,10 +74,10 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                 reason='Password should not contain e-mail'
             )
 
-    # Пример метода для действий после успешной регистрации пользователя.
     async def on_after_register(
             self, user: User, request: Optional[Request] = None
     ):
+        """Метод для действий после успешной регистрации пользователя."""
         # Вместо print здесь можно было бы настроить отправку письма.
         print(f'Пользователь {user.email} зарегистрирован.')
 

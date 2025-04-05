@@ -27,6 +27,10 @@ class CRUDReservation(CRUDBase):
             reservation_id: Optional[int] = None,
             session: AsyncSession,
     ) -> list[Reservation]:
+        """
+        При обновлении объекта бронирования надо удостовериться, что изменённый интервал 
+        времени не пересечётся с забронированными интервалами
+        """
         # Выносим уже существующий запрос в отдельное выражение.
         select_stmt = select(Reservation).where(
             Reservation.meetingroom_id == meetingroom_id,
@@ -52,6 +56,7 @@ class CRUDReservation(CRUDBase):
             room_id: int,
             session: AsyncSession,
     ):
+        """Возвращаться только те объекты, период бронирования которых ещё не истёк"""
         reservations = await session.execute(
             # Получить все объекты Reservation.
             select(Reservation).where(
