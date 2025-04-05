@@ -1,0 +1,15 @@
+#Имена переменных окружения обычно записываются в .env заглавными буквами, 
+# а в классе Settings — строчными.
+
+# В файле .env не обрамляйте значения кавычками: код будет работать и с кавычками, 
+# и без них, а вот при использовании Docker кавычки будут восприняты как часть 
+# значения, и это приведёт к ошибке.
+
+APP_AUTHOR=Антон
+AUTHOR_PASS=qwerty123
+DEADLINE_DATE=02.09.2022
+APP_TITLE=Сервис бронирования переговорных комнат
+DATABASE_URL=sqlite+aiosqlite:///./fastapi.db
+SECRET=dfgfdsggd
+FIRST_SUPERUSER_EMAIL=1@ya.ru
+FIRST_SUPERUSER_PASSWORD=1234567890
