@@ -1,19 +1,15 @@
 from datetime import datetime
-
 from typing import Optional
 
+from sqlalchemy import and_, between, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import and_, select
 
 from app.crud.base import CRUDBase
 from app.models import Reservation, User
-from app.models.reservation import Reservation
 
 
-# Новый класс должен быть унаследован от CRUDBase.
 class CRUDReservation(CRUDBase):
-    # Ищет в модели Reservation объекты, которые пересекаются
-    # по времени с интервалом, указанном в запросе.
+
     async def get_reservations_at_the_same_time(
             self,
             # Добавляем звёздочку, чтобы обозначить, что все дальнейшие параметры
@@ -27,11 +23,6 @@ class CRUDReservation(CRUDBase):
             reservation_id: Optional[int] = None,
             session: AsyncSession,
     ) -> list[Reservation]:
-        """
-        При обновлении объекта бронирования надо удостовериться, что изменённый интервал 
-        времени не пересечётся с забронированными интервалами
-        """
-        # Выносим уже существующий запрос в отдельное выражение.
         select_stmt = select(Reservation).where(
             Reservation.meetingroom_id == meetingroom_id,
             and_(
@@ -39,14 +30,10 @@ class CRUDReservation(CRUDBase):
                 to_reserve >= Reservation.from_reserve
             )
         )
-        # Если передан id бронирования...
         if reservation_id is not None:
-            # ... то к выражению нужно добавить новое условие.
             select_stmt = select_stmt.where(
-                # id искомых объектов не равны id обновляемого объекта.
                 Reservation.id != reservation_id
             )
-        # Выполняем запрос.
         reservations = await session.execute(select_stmt)
         reservations = reservations.scalars().all()
         return reservations
@@ -56,7 +43,6 @@ class CRUDReservation(CRUDBase):
             room_id: int,
             session: AsyncSession,
     ):
-        """Возвращаться только те объекты, период бронирования которых ещё не истёк"""
         reservations = await session.execute(
             # Получить все объекты Reservation.
             select(Reservation).where(
@@ -70,17 +56,33 @@ class CRUDReservation(CRUDBase):
         reservations = reservations.scalars().all()
         return reservations
 
-    async def get_by_user(
-            self, session: AsyncSession, user: User
+    async def get_by_user(self, session: AsyncSession, user: User
     ):
-        """ Возвращает список объектов Reservation, связанных с пользователем, выполняющим запрос"""
         reservations = await session.execute(
-            select(Reservation).where(
-                Reservation.user_id == user.id
-            )
+            select(Reservation).where(Reservation.user_id == user.id)
         )
         return reservations.scalars().all()
 
+    async def get_count_res_at_the_same_time(
+            self,
+            from_reserve: datetime,
+            to_reserve: datetime,
+            session: AsyncSession,
+    ) -> list[dict[str, int]]:
+        reservations = await session.execute(
+            # Получаем количество бронирований переговорок за период
+            select(Reservation.meetingroom_id,
+                    func.count(Reservation.meetingroom_id)).where(
+                Reservation.from_reserve >= from_reserve,
+                Reservation.to_reserve <= to_reserve
+            ).group_by(Reservation.meetingroom_id)
+        )
+        reservations = reservations.all()
+        res = [
+            {"meetingroom_id": room_id, "count": count}
+            for room_id, count in reservations
+        ]
+        return res
 
-# Создаём объекта класса CRUDReservation.
+
 reservation_crud = CRUDReservation(Reservation)

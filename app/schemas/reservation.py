@@ -1,18 +1,11 @@
 # app/schemas/reservation.py
-from typing import Optional
 from datetime import datetime, timedelta
-from pydantic import Field
-from pydantic import BaseModel, Extra, root_validator, validator
+from typing import Optional
 
+from pydantic import BaseModel, Extra, Field, root_validator, validator
 
-# Представить объект datetime в виде строки с точностью до минут.
-FROM_TIME = (
-    datetime.now() + timedelta(minutes=10)
-).isoformat(timespec='minutes')
-
-TO_TIME = (
-    datetime.now() + timedelta(hours=1)
-).isoformat(timespec='minutes')
+FROM_TIME = (datetime.now() + timedelta(minutes=10)).isoformat(timespec='minutes')
+TO_TIME = (datetime.now() + timedelta(hours=1)).isoformat(timespec='minutes')
 
 
 class ReservationBase(BaseModel):
@@ -24,8 +17,7 @@ class ReservationBase(BaseModel):
 
 
 class ReservationUpdate(ReservationBase):
-    # валидатор, проверяющий, что начало бронирования не меньше
-    # текущего времени
+
     @validator('from_reserve')
     def check_from_reserve_later_than_now(cls, value):
         if value <= datetime.now():
@@ -34,8 +26,6 @@ class ReservationUpdate(ReservationBase):
                 'не может быть меньше текущего времени'
             )
         return value
-    # валидатор, проверяющий, что время начала бронирования меньше
-    # времени окончания
 
     @root_validator(skip_on_failure=True)
     def check_from_reserve_before_to_reserve(cls, values):
@@ -60,8 +50,6 @@ class ReservationCreate(ReservationUpdate):
 class ReservationDB(ReservationBase):
     id: int
     meetingroom_id: int
-    # запретить пользователю передавать параметры, не описанные в схеме,
-    # в подклассе Config устанавливается значение
     user_id: Optional[int]
 
     class Config:
